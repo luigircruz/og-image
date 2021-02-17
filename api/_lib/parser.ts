@@ -1,6 +1,6 @@
 import { IncomingMessage } from 'http';
 import { parse } from 'url';
-import { ParsedRequest } from './types';
+import { ParsedRequest, Theme } from './types';
 
 export function parseRequest(req: IncomingMessage) {
     console.log('HTTP ' + req.url);
@@ -36,7 +36,7 @@ export function parseRequest(req: IncomingMessage) {
         widths: getArray(widths),
         heights: getArray(heights),
     };
-    parsedRequest.images = getDefaultImages(parsedRequest.images);
+    parsedRequest.images = getDefaultImages(parsedRequest.images, parsedRequest.theme);
     return parsedRequest;
 }
 
@@ -50,8 +50,10 @@ function getArray(stringOrArray: string[] | string | undefined): string[] {
     }
 }
 
-function getDefaultImages(images: string[]): string[] {
-    const defaultImage = 'https://luigicruz.dev/logo-soft.svg';
+function getDefaultImages(images: string[], theme: Theme): string[] {
+    const defaultImage = theme === 'light'
+        ? 'https://luigicruz.dev/logo-soft.svg'
+        : 'https://luigicruz.dev/logo-soft.svg';
 
     if (!images || !images[0]) {
         return [defaultImage];
