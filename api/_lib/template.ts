@@ -1,64 +1,37 @@
 
-import { readFileSync } from 'fs';
 import marked from 'marked';
 import { sanitizeHtml } from './sanitizer';
-import { ParsedRequest } from './types';
+import { ParsedRequest, Style, Theme } from './types';
+import * as hero from 'hero-patterns';
+import fs from 'fs';
+
 const twemoji = require('twemoji');
 const twOptions = { folder: 'svg', ext: '.svg' };
 const emojify = (text: string) => twemoji.parse(text, twOptions);
 
-const rglr = readFileSync(`${__dirname}/../_fonts/Inter-Regular.woff2`).toString('base64');
-const bold = readFileSync(`${__dirname}/../_fonts/Inter-Bold.woff2`).toString('base64');
-const mono = readFileSync(`${__dirname}/../_fonts/Vera-Mono.woff2`).toString('base64');
-
-function getCss(theme: string, fontSize: string) {
-    let background = 'white';
-    let foreground = 'black';
-    let radial = 'lightgray';
+function getCss(theme: string, pattern: string, fontSize: string) {
+    let foreground = '#000000';
+    let background = '#ffffff';
+    let opacity = 0.07;
 
     if (theme === 'dark') {
-        background = 'black';
-        foreground = 'white';
-        radial = 'dimgray';
+        foreground = '#ffffff';
+        background = '#000000';
+        opacity = 0.15;
     }
     return `
-    @font-face {
-        font-family: 'Inter';
-        font-style:  normal;
-        font-weight: normal;
-        src: url(data:font/woff2;charset=utf-8;base64,${rglr}) format('woff2');
-    }
-
-    @font-face {
-        font-family: 'Inter';
-        font-style:  normal;
-        font-weight: bold;
-        src: url(data:font/woff2;charset=utf-8;base64,${bold}) format('woff2');
-    }
-
-    @font-face {
-        font-family: 'Vera';
-        font-style: normal;
-        font-weight: normal;
-        src: url(data:font/woff2;charset=utf-8;base64,${mono})  format("woff2");
-      }
-
     body {
-        background: ${background};
-        background-image: radial-gradient(circle at 25px 25px, ${radial} 2%, transparent 0%), radial-gradient(circle at 75px 75px, ${radial} 2%, transparent 0%);
-        background-size: 100px 100px;
-        height: 100vh;
-        display: flex;
-        text-align: center;
-        align-items: center;
-        justify-content: center;
+        font-family: Inter;
+        background-color: ${background};
+        background-image: ${hero[pattern](foreground, opacity)}
     }
 
     code {
-        color: #D400FF;
-        font-family: 'Vera';
+        color: #ff2d20;
+        font-size: 2vw;
+        font-family: 'Space Mono';
+        font-weight: bold;
         white-space: pre-wrap;
-        letter-spacing: -5px;
     }
 
     code:before, code:after {
@@ -77,12 +50,6 @@ function getCss(theme: string, fontSize: string) {
         margin: 0 75px;
     }
 
-    .plus {
-        color: #BBB;
-        font-family: Times New Roman, Verdana;
-        font-size: 100px;
-    }
-
     .spacer {
         margin: 150px;
     }
@@ -95,43 +62,140 @@ function getCss(theme: string, fontSize: string) {
     }
     
     .heading {
-        font-family: 'Inter', sans-serif;
         font-size: ${sanitizeHtml(fontSize)};
         font-style: normal;
         color: ${foreground};
-        line-height: 1.8;
-    }`;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .description {
+        color: ${foreground};
+    }
+
+    .text-laravel {
+        color: #ff2d20;
+    }
+    `;
 }
 
-export function getHtml(parsedReq: ParsedRequest) {
-    const { text, theme, md, fontSize, images, widths, heights } = parsedReq;
+function getDescription(description: string) {
+    if (description === '' || description === undefined) {
+        return '';
+    }
+
+    return  `
+    <p class="description mx-auto text-5xl pb-12 max-w-4xl">${sanitizeHtml(description)}</p>
+    `
+}
+
+function getAlternativeHtml(parsedReq: ParsedRequest) {
+    const { text, theme, md, fontSize, images, widths, heights, pattern, packageManager, packageName, description, style, showWatermark } = parsedReq;
+
     return `<!DOCTYPE html>
 <html>
     <meta charset="utf-8">
     <title>Generated Image</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+
     <style>
-        ${getCss(theme, fontSize)}
+        ${getCss(theme, pattern, fontSize)}
     </style>
-    <body>
+    <body class="h-screen w-screen flex items-center justify-center text-center">
+        ${images.map((img, i) =>
+            getImage(img, widths[i], heights[i], style)
+        ).join('')}
+        <div class="relative z-10">
+            <div class="heading pb-8">${emojify(
+        md ? marked(text) : sanitizeHtml(text)
+    )}
+            </div>
+            ${getDescription(description)}
+            <code>${sanitizeHtml(packageManager)} ${sanitizeHtml(packageName)}</code>
+        </div>
+        ${showWatermark ? getWatermark(theme) : ''}
+    </body>
+</html>`;
+}
+
+function getWatermark(theme: Theme) {
+    if (theme === 'dark') {
+        return `<div class="absolute bottom-0 right-0 opacity-25 text-2xl text-white p-8">Generated using brands.luigicruz.dev</div>`
+    } else {
+        return `<div class="absolute bottom-0 right-0 opacity-50 text-2xl text-black p-8">Generated using brands.luigicruz.dev</div>`
+    }
+}
+
+export function getHtml(parsedReq: ParsedRequest) {
+    const { text, theme, md, fontSize, images, widths, heights, pattern, packageManager, packageName, description, style, showWatermark } = parsedReq;
+
+    if (style === 'style_2') {
+        return getAlternativeHtml(parsedReq);
+    }
+
+    return `<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    <title>Generated Image</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        ${getCss(theme, pattern, fontSize)}
+    </style>
+    <body class="h-screen w-screen flex items-center justify-center text-center">
         <div>
-            <div class="spacer">
-            <div class="logo-wrapper">
+            <div class="flex items-center justify-center">
                 ${images.map((img, i) =>
-                    getPlusSign(i) + getImage(img, widths[i], heights[i])
+                    getImage(img, widths[i], heights[i], style)
                 ).join('')}
             </div>
-            <div class="spacer">
-            <div class="heading">${emojify(
+            <div class="heading py-12">${emojify(
                 md ? marked(text) : sanitizeHtml(text)
             )}
             </div>
+            ${getDescription(description)}
+            <code>${sanitizeHtml(packageManager)} ${sanitizeHtml(packageName)}</code>
+            ${showWatermark ? getWatermark(theme) : ''}
         </div>
     </body>
 </html>`;
 }
 
-function getImage(src: string, width ='auto', height = '225') {
+function getImage(src: string, width ='225', height = '225', style: Style) {
+    const filename = `${__dirname}/../../node_modules/heroicons/outline/${sanitizeHtml(src)}.svg`;
+
+    if (fs.existsSync(filename)) {
+        const iconContent = fs.readFileSync(filename).toString();
+
+        if (style === 'style_2') {
+            return iconContent.replace('<svg ',`<svg
+                style="width: ${sanitizeHtml(width)}px; height: ${sanitizeHtml(height)}px;"
+                class="opacity-50 absolute top-0 right-0 -mr-12 -mt-12 text-laravel -rotate-12 transform"
+            `);
+        }
+        return iconContent.replace('<svg ', `<svg 
+        style="width: ${sanitizeHtml(width)}px; height: ${sanitizeHtml(height)}px;"
+        class="text-laravel -mt-24" `);
+    }
+
+    if (style === 'style_2') {
+        return `<img
+            class="opacity-50 absolute top-0 right-0 -mr-12 -mt-12 text-laravel -rotate-12 transform"
+            alt="Generated Image"
+            src="${sanitizeHtml(src)}"
+            width="${sanitizeHtml(width)}"
+            height="${sanitizeHtml(height)}"
+        />`
+    }
     return `<img
         class="logo"
         alt="Generated Image"
@@ -139,8 +203,4 @@ function getImage(src: string, width ='auto', height = '225') {
         width="${sanitizeHtml(width)}"
         height="${sanitizeHtml(height)}"
     />`
-}
-
-function getPlusSign(i: number) {
-    return i === 0 ? '' : '<div class="plus">+</div>';
 }

@@ -1,17 +1,32 @@
 import { IncomingMessage } from 'http';
 import { parse } from 'url';
-import { ParsedRequest, Theme } from './types';
+import { ParsedRequest } from './types';
 
 export function parseRequest(req: IncomingMessage) {
     console.log('HTTP ' + req.url);
     const { pathname, query } = parse(req.url || '/', true);
-    const { fontSize, images, widths, heights, theme, md } = (query || {});
+    const { fontSize, images, widths, heights, theme, md, showWatermark, pattern, packageManager, packageName, description, style } = (query || {});
 
     if (Array.isArray(fontSize)) {
         throw new Error('Expected a single fontSize');
     }
     if (Array.isArray(theme)) {
         throw new Error('Expected a single theme');
+    }
+    if (Array.isArray(style)) {
+        throw new Error('Expected a single style');
+    }
+    if (Array.isArray(pattern)) {
+        throw new Error('Expected a single pattern');
+    }
+    if (Array.isArray(packageManager)) {
+        throw new Error('Expected a single package manager');
+    }
+    if (Array.isArray(packageName)) {
+        throw new Error('Expected a single package name');
+    }
+    if (Array.isArray(description)) {
+        throw new Error('Expected a single package name');
     }
     
     const arr = (pathname || '/').slice(1).split('.');
@@ -30,13 +45,19 @@ export function parseRequest(req: IncomingMessage) {
         fileType: extension === 'jpeg' ? extension : 'png',
         text: decodeURIComponent(text),
         theme: theme === 'dark' ? 'dark' : 'light',
+        style: style === 'style_2' ? 'style_2' : 'style_1',
         md: md === '1' || md === 'true',
+        showWatermark: showWatermark === '1' || showWatermark === 'true',
         fontSize: fontSize || '96px',
+        pattern: pattern || 'circuitBoard',
+        packageManager: packageManager || '',
+        packageName: packageName || '',
+        description: description || '',
         images: getArray(images),
         widths: getArray(widths),
         heights: getArray(heights),
     };
-    parsedRequest.images = getDefaultImages(parsedRequest.images, parsedRequest.theme);
+    parsedRequest.images = getDefaultImages(parsedRequest.images);
     return parsedRequest;
 }
 
@@ -50,16 +71,11 @@ function getArray(stringOrArray: string[] | string | undefined): string[] {
     }
 }
 
-function getDefaultImages(images: string[], theme: Theme): string[] {
-    const defaultImage = theme === 'light'
-        ? 'https://luigicruz.dev/logo-soft.svg'
-        : 'https://luigicruz.dev/logo-soft.svg';
+function getDefaultImages(images: string[]): string[] {
+    const defaultImage = 'https://luigicruz.dev/logo-soft.svg';
 
     if (!images || !images[0]) {
         return [defaultImage];
-    }
-    if (!images[0].startsWith('https://luigicruz.dev/')) {
-        images[0] = defaultImage;
     }
     return images;
 }

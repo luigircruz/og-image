@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "chrome-aws-lambda": "7.0.0",
+    "hero-patterns": "2.1.0",
+    "heroicons": "0.4.2",
     "marked": "2.0.0",
     "puppeteer-core": "7.0.0",
     "twemoji": "13.0.1"
