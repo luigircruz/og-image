@@ -669,7 +669,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
                     })
                 }),
                 H(Field, {
-                    label: 'Image 1',
+                    label: 'Image',
                     input: H('div',
                         H(Dropdown, {
                             options: imageOptions,

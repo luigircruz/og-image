@@ -125,9 +125,9 @@ function getAlternativeHtml(parsedReq: ParsedRequest) {
 
 function getWatermark(theme: Theme) {
     if (theme === 'dark') {
-        return `<div class="absolute bottom-0 right-0 opacity-25 text-2xl text-white p-8">Generated using brands.luigicruz.dev</div>`
+        return `<div class="absolute bottom-0 right-0 opacity-25 text-2xl text-white p-8">Generated using og-image.luigicruz.dev</div>`
     } else {
-        return `<div class="absolute bottom-0 right-0 opacity-50 text-2xl text-black p-8">Generated using brands.luigicruz.dev</div>`
+        return `<div class="absolute bottom-0 right-0 opacity-50 text-2xl text-black p-8">Generated using og-image.luigicruz.dev</div>`
     }
 }
 
