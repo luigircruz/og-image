@@ -242,6 +242,7 @@ const watermarkOptions: DropdownOption[] = [
 
 const imageOptions: DropdownOption[] = [
     { text: 'Luigi Cruz Logo', value: 'https://luigicruz.dev/logo-soft.svg' }, 
+    { text: 'React JS Logo', value: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii0xMS41IC0xMC4yMzE3NCAyMyAyMC40NjM0OCI+CiAgPHRpdGxlPlJlYWN0IExvZ288L3RpdGxlPgogIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIyLjA1IiBmaWxsPSIjNjFkYWZiIi8+CiAgPGcgc3Ryb2tlPSIjNjFkYWZiIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiPgogICAgPGVsbGlwc2Ugcng9IjExIiByeT0iNC4yIi8+CiAgICA8ZWxsaXBzZSByeD0iMTEiIHJ5PSI0LjIiIHRyYW5zZm9ybT0icm90YXRlKDYwKSIvPgogICAgPGVsbGlwc2Ugcng9IjExIiByeT0iNC4yIiB0cmFuc2Zvcm09InJvdGF0ZSgxMjApIi8+CiAgPC9nPgo8L3N2Zz4K' }, 
     { text: 'Laravel Logo', value: 'https://laravel.com/img/logomark.min.svg' }, 
     { text: 'PHP Logo', value: 'https://www.php.net/images/logos/new-php-logo.svg' }, 
     { text: 'Alternative PHP Logo', value: 'https://www.php.net/images/logos/php-logo.svg' }, 
