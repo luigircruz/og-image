@@ -18,6 +18,13 @@ a:hover {
 footer {
     opacity: 0.5;
     font-size: 0.8em;
+    margin-top: 60px;
+}
+
+hr {
+    color: #666;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .center, h1 {
@@ -276,6 +283,7 @@ img {
     margin-bottom: 50px;
     transition: all 0.2s ease;
     max-width: 100%;
+    margin-top: 10px;
 }
 
 .image-wrapper:hover {
@@ -314,4 +322,57 @@ img {
 @media (max-width:500px) {
     .github-corner:hover .octo-arm { animation:none }
     .github-corner .octo-arm { animation:octocat-wave 560ms ease-in-out }
+}
+
+.logo {
+    max-height: 36px;
+    max-width: 36px;
+    display: flex;
+}
+
+.heading-text {
+    margin-bottom: 60px;
+}
+
+.footer-links {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 32px;
+}
+
+.logo-footer {
+    margin-bottom: 16px;
+}
+
+.menu-links {
+    list-style-type: none;
+    padding-left: 0;
+    display: flex;
+    font-weight: bold;
+    justify-content: space-around;
+    width: 480px;
+}
+
+.menu-links li a {
+    color: #666;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+    max-width: 320px;
+}
+
+.social-links a {
+    width: 24px;
+    height: 24px;
+}
+
+.last-social {
+    margin-left: 16px;
 }
