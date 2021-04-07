@@ -29,7 +29,7 @@ It looks like the following:
 
 The short answer is that it would take a long time to painstakingly design an image for every single blog post and every single documentation page. And we don't want the exact same image for every blog post because that wouldn't make the article stand out when it was shared to Twitter. 
 
-That's where `og-image.vercel.app` comes in. We can simply pass the title of our blog post to our generator service and it will generate the image for us on the fly!
+That's where `og-image.luigircruz.vercel.app` comes in. We can simply pass the title of our blog post to our generator service and it will generate the image for us on the fly!
 
 It looks like the following:
 
@@ -40,7 +40,7 @@ It looks like the following:
 </head>
 ```
 
-## Authors
+## Contributors
 
 - Steven ([@styfle](https://twitter.com/styfle)) - [Vercel](https://vercel.com)
 - Evil Rabbit ([@evilrabbit](https://twitter.com/evilrabbit_)) - [Vercel](https://vercel.com)
